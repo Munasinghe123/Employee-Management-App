@@ -143,7 +143,7 @@ export default function Dashboard() {
                 }
             );
 
-             console.log("weeky stats", res.data);
+            console.log("weeky stats", res.data);
 
             setWeeklyStats(res.data);
         }
@@ -253,9 +253,27 @@ export default function Dashboard() {
             setModalLoading(true);
             setModalError(null);
 
+            console.log("CHECKOUT FUNCTION CALLED");
+
+            const { status } = await Location.requestForegroundPermissionsAsync();
+
+            if (status !== 'granted') {
+                setModalError("Location permission required");
+                setModalLoading(false);
+                return;
+            }
+
+            const location = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.High,
+            });
+
+            const { latitude, longitude } = location.coords;
+
+            console.log("lat", latitude , "log", longitude);
+
             const response = await axios.post(
                 'http://localhost:7000/attendance/checkout',
-                {},
+                { latitude, longitude },
                 {
                     headers: {
                         Authorization: `Bearer ${auth?.token}`,
@@ -313,7 +331,7 @@ export default function Dashboard() {
                 style={styles.container}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-                 bounces={false}
+                bounces={false}
             >
                 {/* HERO HEADER */}
                 <View style={styles.heroHeader}>
@@ -464,7 +482,8 @@ export default function Dashboard() {
                         </View>
                     </View>
 
-                    <View style={{ height: 40 }} />
+                    <View style={{ height: 30 }} />
+                    
                 </View>
             </ScrollView>
             {/* check in modal */}
@@ -573,7 +592,7 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#faf7f7',
+        backgroundColor: '#f5f3ff',
     },
     scrollContent: {
         flexGrow: 1,
@@ -698,6 +717,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         color: '#1F2937',
+        paddingBottom:10
     },
     statusPill: {
         backgroundColor: '#DBEAFE',
@@ -728,7 +748,6 @@ const styles = StyleSheet.create({
     },
     detailText: {
         flex: 1,
-        paddingTop: 4,
     },
     detailLabel: {
         fontSize: 12,
@@ -896,7 +915,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 8,
-        backgroundColor: '#e91111',
+        backgroundColor: '#6930b5',
     },
 
     confirmText: {

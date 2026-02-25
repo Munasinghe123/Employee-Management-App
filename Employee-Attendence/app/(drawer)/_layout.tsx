@@ -37,7 +37,7 @@ export default function DrawerLayout() {
         headerStyle: { backgroundColor: '#ffffff' },
         drawerActiveBackgroundColor: '#6B46C1',
         drawerActiveTintColor: '#FFFFFF',
-        headerTintColor: '#000000',
+        headerTintColor: '#5829c5',
         drawerInactiveTintColor: '#000000',
 
         drawerStyle: {

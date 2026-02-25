@@ -212,7 +212,7 @@ export default function Login() {
                 </LinearGradient>
               </TouchableOpacity>
 
-              <Text style={styles.footer}>© 2025 Lanka Electricity Company</Text>
+              <Text style={styles.footer}>© 2026 Lanka Electricity Company</Text>
             </View>
           </View>
         </View>
