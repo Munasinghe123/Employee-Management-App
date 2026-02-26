@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { AuthContext } from '@/context/authContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 /* TYPES */
@@ -68,6 +69,8 @@ const initialFormState: DailyLogForm = {
 
 
 export default function DailyLogSheet() {
+
+  const insets = useSafeAreaInsets();
 
   const auth = useContext(AuthContext);
 
@@ -225,10 +228,14 @@ export default function DailyLogSheet() {
   console.log("total steps", totalSteps);
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-    >
+   <ScrollView
+    style={styles.container}
+    contentContainerStyle={[
+        styles.content,
+        { paddingBottom: 100 + insets.bottom }  // ← dynamic
+    ]}
+    showsVerticalScrollIndicator={false}
+>
       <View style={styles.formWrapper}>
         {/* Progress */}
         <View style={styles.progressWrap}>
