@@ -5,13 +5,11 @@ import {
     StyleSheet,
     ScrollView,
     TouchableOpacity,
-    Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '@/context/authContext';
-import { getGreeting, getFormattedDate } from '@/helpers/dateTime';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { Modal } from 'react-native';
@@ -332,8 +330,8 @@ export default function Dashboard() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
                 contentInsetAdjustmentBehavior="never"
-                automaticallyAdjustContentInsets={false}        // ← ADD
-                automaticallyAdjustsScrollIndicatorInsets={false} // ← ADD
+                automaticallyAdjustContentInsets={false}
+                automaticallyAdjustsScrollIndicatorInsets={false}
                 bounces={false}
             >
 
@@ -590,6 +588,62 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 
+     // HEADER
+    heroHeader: {
+        backgroundColor: '#6B46C1',
+        paddingTop: 40,
+        paddingBottom: 40,
+        paddingHorizontal: 20,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+    },
+    menuButton: {
+        width: 24,
+        height: 24,
+        marginBottom: 16,
+    },
+    menuLine: {
+        width: 24,
+        height: 2,
+        backgroundColor: '#ffffff',
+        borderRadius: 2,
+        marginBottom: 5,
+    },
+    dashboardTitle: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.7)',
+        marginBottom: 10,
+    },
+    userHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    avatar: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        marginRight: 15,
+        borderWidth: 3,
+        borderColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: '#E0E7FF',
+    },
+    greeting: {
+        fontSize: 16,
+        color: 'rgba(255,255,255,0.9)',
+        marginBottom: 3,
+    },
+    name: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#ffffff',
+        marginBottom: 3,
+    },
+    date: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.7)',
+    },
+
     // STATS ROW
     statsRow: {
         flexDirection: 'row',
@@ -612,7 +666,7 @@ const styles = StyleSheet.create({
     },
 
     statLabel: {
-        fontSize: 11,        
+        fontSize: 11,
         color: '#6B7280',
     },
     statIcon: {

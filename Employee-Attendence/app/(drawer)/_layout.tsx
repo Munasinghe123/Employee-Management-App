@@ -31,8 +31,8 @@ export default function TabLayout() {
           tabBarStyle: {
             backgroundColor: '#ffffff',
             borderTopColor: '#F3F4F6',
-            height: 70 + insets.bottom,
-            paddingBottom: 12,
+            height: 60 + insets.bottom,
+            paddingBottom: 8,
             paddingTop: 8,
             position: 'absolute',
             bottom: 0,
@@ -49,7 +49,7 @@ export default function TabLayout() {
           options={{
             headerStyle: {
               backgroundColor: '#6B46C1',
-              height: 180,
+              height: 130,
             },
             headerShadowVisible: false,
             headerTitle: () => {
@@ -93,7 +93,7 @@ export default function TabLayout() {
           options={{
             headerStyle: {
               backgroundColor: '#6B46C1',
-              height: 180,
+              height: 130,
             },
             headerShadowVisible: false,
             headerTitle: () => (
@@ -104,7 +104,7 @@ export default function TabLayout() {
                   color: '#fff',
                   marginBottom: 4,
                 }}>
-                  Log Sheet
+                  Log Sheet 
                 </Text>
                 <Text style={{
                   fontSize: 13,
@@ -143,12 +143,12 @@ export default function TabLayout() {
       </Tabs>
 
       {/* Logout confirmation modal */}
-      <Modal visible={showLogoutModal} transparent animationType="slide">
+      <Modal visible={showLogoutModal} transparent animationType="fade">
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <View style={{ backgroundColor: '#fff', borderRadius: 28, padding: 28, margin: 16, marginBottom: 40 }}>
             <Text style={{ fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 8 }}>Logging Out?</Text>
             <Text style={{ color: '#6B7280', textAlign: 'center', marginBottom: 24 }}>
-              You'll need to sign in again to access your shifts.
+              You'll need to sign in again to access your shift data.
             </Text>
             <TouchableOpacity
               onPress={handleLogout}
