@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: '65%',
-    height: '65%',
+    width: '80%',
+    height: '80%',
   },
 
   signInTitle: {

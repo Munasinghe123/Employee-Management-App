@@ -12,6 +12,37 @@ export default function Splash() {
 
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const haloAnim = useRef(new Animated.Value(0)).current; 
+
+  useEffect(() => {
+    // Step 1: logo + card appear together
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Step 2: halo pulses in AFTER logo appears
+      Animated.timing(haloAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const timer = setTimeout(() => {
+      router.replace('/login');
+    }, 2500);  // ← slightly longer to see full animation
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Logo scale + fade animation
@@ -44,18 +75,33 @@ export default function Splash() {
     >
       <View>
         <View style={styles.logoHalo}>
-          <View style={styles.logoCard}>
-            <Animated.Image
-              source={require('../assets/images/logo.png')}
-              style={[
-                styles.logo,
+          <View>
+            <Animated.View style={[
+              styles.logoHalo,
+              {
+                opacity: haloAnim,           // ← fades in after card
+                transform: [{
+                  scale: haloAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.6, 1], // ← grows in
+                  })
+                }]
+              }
+            ]}>
+              <Animated.View style={[
+                styles.logoCard,
                 {
                   transform: [{ scale: scaleAnim }],
                   opacity: fadeAnim,
-                },
-              ]}
-              resizeMode="contain"
-            />
+                }
+              ]}>
+                <Animated.Image
+                  source={require('../assets/images/logo.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </Animated.View>
+            </Animated.View>
           </View>
         </View>
       </View>
