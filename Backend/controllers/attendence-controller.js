@@ -11,7 +11,7 @@ const CheckIn = async (req, res) => {
             return res.status(400).json({ message: "Location required" });
         }
 
-        // 1️⃣ Get substation details
+        // Get substation details
         const [stationRows] = await db.query(
             `SELECT s.substationId, s.latitude, s.longitude
              FROM employee e
@@ -27,7 +27,7 @@ const CheckIn = async (req, res) => {
         const { substationId, latitude: stationLat, longitude: stationLon } =
             stationRows[0];
 
-        // 2️⃣ Determine active shift
+        // Determine active shift
         const nowSL = moment().tz("Asia/Colombo");
         const currentMinutes = nowSL.hour() * 60 + nowSL.minute();
 
@@ -61,7 +61,7 @@ const CheckIn = async (req, res) => {
 
         const shiftId = activeShift.shiftId;
 
-        // 3️⃣ Prevent duplicate check-in
+        // Prevent duplicate check-in
         const [existing] = await db.query(
             `SELECT id, workStatus
              FROM attendance
@@ -88,7 +88,7 @@ const CheckIn = async (req, res) => {
             }
         }
 
-        // 4️⃣ Distance validation
+        //  Distance validation
         const distance = getDistance(
             latitude,
             longitude,
@@ -99,7 +99,7 @@ const CheckIn = async (req, res) => {
         const ALLOWED_RADIUS = 50;
         const isValidLocation = distance <= ALLOWED_RADIUS;
 
-        // 5️⃣ Insert attendance (UPDATED SCHEMA)
+        //  Insert attendance (UPDATED SCHEMA)
         await db.query(
             `INSERT INTO attendance
              (employeeId, substationId, shiftId,
@@ -169,19 +169,19 @@ const CheckOut = async (req, res) => {
 
         const attendanceId = rows[0].id;
 
-        //  Prevent insane duration (optional safety)
-        const [durationRow] = await db.query(
-            `SELECT TIMESTAMPDIFF(HOUR, checkInTime, NOW()) as hoursWorked
-             FROM attendance
-             WHERE id = ?`,
-            [attendanceId]
-        );
+        //  Prevent insane duration 
+        // const [durationRow] = await db.query(
+        //     `SELECT TIMESTAMPDIFF(HOUR, checkInTime, NOW()) as hoursWorked
+        //      FROM attendance
+        //      WHERE id = ?`,
+        //     [attendanceId]
+        // );
 
-        if (durationRow[0].hoursWorked > 24) {
-            return res.status(400).json({
-                message: "Shift exceeded maximum allowed duration. Contact admin."
-            });
-        }
+        // if (durationRow[0].hoursWorked > 24) {
+        //     return res.status(400).json({
+        //         message: "Shift exceeded maximum allowed duration. Contact admin."
+        //     });
+        // }
 
         //  Get substation coordinates again
         const [stationRows] = await db.query(

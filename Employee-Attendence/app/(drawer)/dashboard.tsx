@@ -433,7 +433,7 @@ export default function Dashboard() {
 
                     {/* WEEKLY HOURS CARD */}
                     <View style={styles.quickInfoCard}>
-                        <Text style={styles.quickInfoTitle}>Weekly Hours</Text>
+                        <Text style={styles.quickInfoTitle}>Weekly Summary</Text>
 
                         <View style={styles.infoItem}>
                             <Text style={styles.infoLabel}>Total Hours</Text>
@@ -467,7 +467,7 @@ export default function Dashboard() {
                         </View>
                     </View>
 
-                    <View style={{ height: 50 }} />
+                    <View style={{ height: 100 }} />
 
                 </View>
             </ScrollView>

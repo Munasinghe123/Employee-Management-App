@@ -58,7 +58,7 @@ export default function TabLayout() {
               return (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
                   <Image
-                    // source={require('../../assets/images/user.png')}
+                    source={require('../../assets/images/user.png')}
                     style={{
                       width: 52, height: 52, borderRadius: 26,
                       borderWidth: 2.5,
