@@ -5,13 +5,11 @@ import {
     StyleSheet,
     ScrollView,
     TouchableOpacity,
-    Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '@/context/authContext';
-import { getGreeting, getFormattedDate } from '@/helpers/dateTime';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { Modal } from 'react-native';
@@ -143,7 +141,7 @@ export default function Dashboard() {
                 }
             );
 
-             console.log("weeky stats", res.data);
+            console.log("weeky stats", res.data);
 
             setWeeklyStats(res.data);
         }
@@ -253,9 +251,27 @@ export default function Dashboard() {
             setModalLoading(true);
             setModalError(null);
 
+            console.log("CHECKOUT FUNCTION CALLED");
+
+            const { status } = await Location.requestForegroundPermissionsAsync();
+
+            if (status !== 'granted') {
+                setModalError("Location permission required");
+                setModalLoading(false);
+                return;
+            }
+
+            const location = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.High,
+            });
+
+            const { latitude, longitude } = location.coords;
+
+            console.log("lat", latitude, "log", longitude);
+
             const response = await axios.post(
                 'http://localhost:7000/attendance/checkout',
-                {},
+                { latitude, longitude },
                 {
                     headers: {
                         Authorization: `Bearer ${auth?.token}`,
@@ -313,24 +329,11 @@ export default function Dashboard() {
                 style={styles.container}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
-                 bounces={false}
+                contentInsetAdjustmentBehavior="never"
+                automaticallyAdjustContentInsets={false}
+                automaticallyAdjustsScrollIndicatorInsets={false}
+                bounces={false}
             >
-                {/* HERO HEADER */}
-                <View style={styles.heroHeader}>
-
-                    <View style={styles.userHeader}>
-                        <Image
-                            source={require('../../assets/images/user.png')}
-                            style={styles.avatar}
-                        />
-
-                        <View>
-                            <Text style={styles.greeting}>{getGreeting()}</Text>
-                            <Text style={styles.name}>{employeeName}</Text>
-                            <Text style={styles.date}>{getFormattedDate()}</Text>
-                        </View>
-                    </View>
-                </View>
 
                 {/* MAIN CONTENT */}
                 <View style={styles.content}>
@@ -341,7 +344,7 @@ export default function Dashboard() {
                                 <Ionicons name="calendar" size={20} color="#6B46C1" />
                             </View>
                             <Text style={styles.statValue}>{totalShiftsThisWeek}</Text>
-                            <Text style={styles.statLabel}>This Week</Text>
+                            <Text style={styles.statLabel} >This Week</Text>
                         </View>
 
                         <View style={styles.statCard}>
@@ -430,7 +433,7 @@ export default function Dashboard() {
 
                     {/* WEEKLY HOURS CARD */}
                     <View style={styles.quickInfoCard}>
-                        <Text style={styles.quickInfoTitle}>Weekly Hours</Text>
+                        <Text style={styles.quickInfoTitle}>Weekly Summary</Text>
 
                         <View style={styles.infoItem}>
                             <Text style={styles.infoLabel}>Total Hours</Text>
@@ -464,7 +467,8 @@ export default function Dashboard() {
                         </View>
                     </View>
 
-                    <View style={{ height: 40 }} />
+                    <View style={{ height: 100 }} />
+
                 </View>
             </ScrollView>
             {/* check in modal */}
@@ -573,13 +577,18 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#faf7f7',
+        backgroundColor: '#f5f3ff',
     },
     scrollContent: {
         flexGrow: 1,
     },
 
-    // HEADER
+    // CONTENT
+    content: {
+        padding: 20,
+    },
+
+     // HEADER
     heroHeader: {
         backgroundColor: '#6B46C1',
         paddingTop: 40,
@@ -635,27 +644,30 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.7)',
     },
 
-    // CONTENT
-    content: {
-        padding: 20,
-    },
-
     // STATS ROW
     statsRow: {
         flexDirection: 'row',
-        gap: 12,
+        justifyContent: 'space-between',
         marginBottom: 20,
     },
+
     statCard: {
-        flex: 1,
+        width: '31%',
         backgroundColor: '#ffffff',
         borderRadius: 16,
-        padding: 16,
+        paddingVertical: 18,
+        paddingHorizontal: 12,
+        alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.04,
         shadowRadius: 8,
         elevation: 2,
+    },
+
+    statLabel: {
+        fontSize: 11,
+        color: '#6B7280',
     },
     statIcon: {
         width: 36,
@@ -670,10 +682,6 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#1F2937',
         marginBottom: 2,
-    },
-    statLabel: {
-        fontSize: 12,
-        color: '#6B7280',
     },
 
     // SHIFT CARD
@@ -698,6 +706,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         color: '#1F2937',
+        paddingBottom: 10
     },
     statusPill: {
         backgroundColor: '#DBEAFE',
@@ -728,7 +737,6 @@ const styles = StyleSheet.create({
     },
     detailText: {
         flex: 1,
-        paddingTop: 4,
     },
     detailLabel: {
         fontSize: 12,
@@ -789,7 +797,7 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         borderRadius: 16,
         alignItems: 'center',
-        shadowColor: '#10B981',
+        // shadowColor: '#10B981',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 12,
@@ -896,7 +904,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 8,
-        backgroundColor: '#e91111',
+        backgroundColor: '#6930b5',
     },
 
     confirmText: {

@@ -81,10 +81,6 @@ const getWeeklyShiftStats = async (req, res) => {
             }
         });
 
-        console.log("day shitfs", dayShifts);
-        console.log("night shitfs", nightShifts);
-        console.log("total shitfs",  dayShifts + nightShifts)
-
         return res.json({
             dayShifts,
             nightShifts,

@@ -212,7 +212,7 @@ export default function Login() {
                 </LinearGradient>
               </TouchableOpacity>
 
-              <Text style={styles.footer}>© 2025 Lanka Electricity Company</Text>
+              <Text style={styles.footer}>© 2026 Lanka Electricity Company</Text>
             </View>
           </View>
         </View>
@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: '65%',
-    height: '65%',
+    width: '80%',
+    height: '80%',
   },
 
   signInTitle: {

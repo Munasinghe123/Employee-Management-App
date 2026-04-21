@@ -14,9 +14,9 @@ const CheckIn = async (req, res) => {
         // Get substation details
         const [stationRows] = await db.query(
             `SELECT s.substationId, s.latitude, s.longitude
-       FROM employee e
-       JOIN substations s ON e.substationId = s.substationId
-       WHERE e.employeeId = ?`,
+             FROM employee e
+             JOIN substations s ON e.substationId = s.substationId
+             WHERE e.employeeId = ?`,
             [employeeId]
         );
 
@@ -27,7 +27,7 @@ const CheckIn = async (req, res) => {
         const { substationId, latitude: stationLat, longitude: stationLon } =
             stationRows[0];
 
-        //  Determine active shift (server-side)
+        // Determine active shift
         const nowSL = moment().tz("Asia/Colombo");
         const currentMinutes = nowSL.hour() * 60 + nowSL.minute();
 
@@ -61,14 +61,15 @@ const CheckIn = async (req, res) => {
 
         const shiftId = activeShift.shiftId;
 
-        //  Prevent duplicate check-in
+
+        // Prevent duplicate check-in
         const [existing] = await db.query(
             `SELECT id, workStatus
-   FROM attendance
-   WHERE employeeId = ?
-   AND shiftId = ?
-   AND attendanceDate = CURDATE()
-   LIMIT 1`,
+             FROM attendance
+             WHERE employeeId = ?
+             AND shiftId = ?
+             AND attendanceDate = CURDATE()
+             LIMIT 1`,
             [employeeId, shiftId]
         );
 
@@ -99,21 +100,26 @@ const CheckIn = async (req, res) => {
         const ALLOWED_RADIUS = 50;
         const isValidLocation = distance <= ALLOWED_RADIUS;
 
-        // 4 Insert attendance
+        //  Insert attendance (UPDATED SCHEMA)
         await db.query(
             `INSERT INTO attendance
-       (employeeId, substationId, shiftId,
-        attendanceDate, checkInTime,
-        employeeLatitude, employeeLongitude,
-        workStatus, isValidLocation)
-       VALUES (?, ?, ?, CURDATE(), NOW(), ?, ?, ?, ?)`,
+             (employeeId, substationId, shiftId,
+              attendanceDate,
+              checkInTime,
+              checkInLatitude,
+              checkInLongitude,
+              checkInValid,
+              workStatus)
+             VALUES (?, ?, ?, CURDATE(),
+                     NOW(),
+                     ?, ?, ?,
+                     'CHECKED_IN')`,
             [
                 employeeId,
                 substationId,
                 shiftId,
                 latitude,
                 longitude,
-                "CHECKED_IN",
                 isValidLocation
             ]
         );
@@ -135,9 +141,16 @@ const CheckIn = async (req, res) => {
 
 const CheckOut = async (req, res) => {
     try {
+        const { latitude, longitude } = req.body;
         const employeeId = req.user.employeeId;
 
-        // Find any open attendance session(no restriction)
+        console.log("lat", latitude, "log", longitude);
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: "Location required" });
+        }
+
+        //  Find active check-in session
         const [rows] = await db.query(
             `SELECT id, checkInTime
              FROM attendance
@@ -157,31 +170,68 @@ const CheckOut = async (req, res) => {
 
         const attendanceId = rows[0].id;
 
-        // Optional safety: prevent insane duration (e.g., 48 hours)
-        const [durationRow] = await db.query(
-            `SELECT TIMESTAMPDIFF(HOUR, checkInTime, NOW()) as hoursWorked
-             FROM attendance
-             WHERE id = ?`,
-            [attendanceId]
+        //  Prevent insane duration 
+        // const [durationRow] = await db.query(
+        //     `SELECT TIMESTAMPDIFF(HOUR, checkInTime, NOW()) as hoursWorked
+        //      FROM attendance
+        //      WHERE id = ?`,
+        //     [attendanceId]
+        // );
+
+        // if (durationRow[0].hoursWorked > 24) {
+        //     return res.status(400).json({
+        //         message: "Shift exceeded maximum allowed duration. Contact admin."
+        //     });
+        // }
+
+        //  Get substation coordinates again
+        const [stationRows] = await db.query(
+            `SELECT s.latitude, s.longitude
+             FROM employee e
+             JOIN substations s ON e.substationId = s.substationId
+             WHERE e.employeeId = ?`,
+            [employeeId]
         );
 
-        if (durationRow[0].hoursWorked > 24) {
-            return res.status(400).json({
-                message: "Shift exceeded maximum allowed duration. Contact admin."
-            });
+        if (stationRows.length === 0) {
+            return res.status(404).json({ message: "Substation not found" });
         }
 
-        // Update checkout time
+        const { latitude: stationLat, longitude: stationLon } = stationRows[0];
+
+        //  Distance validation
+        const distance = getDistance(
+            latitude,
+            longitude,
+            stationLat,
+            stationLon
+        );
+
+        const ALLOWED_RADIUS = 50;
+        const isValidLocation = distance <= ALLOWED_RADIUS;
+
+        //  Update attendance with new schema
         await db.query(
             `UPDATE attendance
              SET checkOutTime = NOW(),
+                 checkOutLatitude = ?,
+                 checkOutLongitude = ?,
+                 checkOutValid = ?,
                  workStatus = 'CHECKED_OUT'
              WHERE id = ?`,
-            [attendanceId]
+            [
+                latitude,
+                longitude,
+                isValidLocation,
+                attendanceId
+            ]
         );
 
         return res.json({
-            message: "Checked out successfully",
+            message: isValidLocation
+                ? "Checked out successfully"
+                : "Checked out (Location outside allowed radius)",
+            distance,
             attendance_status: "PENDING"
         });
 
@@ -218,7 +268,7 @@ const getAttendanceStatus = async (req, res) => {
     }
 };
 
-// responsbile for calculating the OT hours
+
 const getWeeklyHours = async (req, res) => {
     try {
         const employeeId = req.user.employeeId;
