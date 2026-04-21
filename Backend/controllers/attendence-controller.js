@@ -61,6 +61,7 @@ const CheckIn = async (req, res) => {
 
         const shiftId = activeShift.shiftId;
 
+
         // Prevent duplicate check-in
         const [existing] = await db.query(
             `SELECT id, workStatus
@@ -267,7 +268,7 @@ const getAttendanceStatus = async (req, res) => {
     }
 };
 
-// responsbile for calculating the OT hours
+
 const getWeeklyHours = async (req, res) => {
     try {
         const employeeId = req.user.employeeId;
