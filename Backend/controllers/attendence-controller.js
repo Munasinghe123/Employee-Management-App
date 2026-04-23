@@ -170,19 +170,6 @@ const CheckOut = async (req, res) => {
 
         const attendanceId = rows[0].id;
 
-        //  Prevent insane duration 
-        // const [durationRow] = await db.query(
-        //     `SELECT TIMESTAMPDIFF(HOUR, checkInTime, NOW()) as hoursWorked
-        //      FROM attendance
-        //      WHERE id = ?`,
-        //     [attendanceId]
-        // );
-
-        // if (durationRow[0].hoursWorked > 24) {
-        //     return res.status(400).json({
-        //         message: "Shift exceeded maximum allowed duration. Contact admin."
-        //     });
-        // }
 
         //  Get substation coordinates again
         const [stationRows] = await db.query(
@@ -301,9 +288,9 @@ const getWeeklyHours = async (req, res) => {
                 ? WEEKLY_LIMIT_MINUTES - totalMinutesWeek
                 : 0;
 
-        console.log("totalHours", (totalMinutesWeek / 60).toFixed(2));
-        console.log("overtimeHours", (overtimeMinutesWeek / 60).toFixed(2));
-        console.log("remainingHours", (remainingMinutes / 60).toFixed(2));
+        // console.log("totalHours", (totalMinutesWeek / 60).toFixed(2));
+        // console.log("overtimeHours", (overtimeMinutesWeek / 60).toFixed(2));
+        // console.log("remainingHours", (remainingMinutes / 60).toFixed(2));
 
         return res.json({
             totalMinutes: totalMinutesWeek,
