@@ -41,7 +41,7 @@ export default function Login() {
     }
   }, [auth?.token]);
 
-  
+
   if (!auth) throw new Error('AuthContext must be used within AuthProvider');
   const { login } = auth;
 
@@ -193,7 +193,7 @@ export default function Login() {
                 </TouchableOpacity>
               </View>
             </View>
-           
+
 
             {/* Button + footer */}
             <View >
@@ -211,8 +211,6 @@ export default function Login() {
                   <Text style={styles.buttonText}>Sign In</Text>
                 </LinearGradient>
               </TouchableOpacity>
-
-              <Text style={styles.footer}>© 2026 Lanka Electricity Company</Text>
             </View>
           </View>
         </View>
@@ -241,19 +239,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
   },
-
   logoCard: {
-    width: 68,
-    height: 68,
-    borderRadius: 18,
+    width: 110,
+    height: 110,
+    borderRadius: 110,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#4C1D95',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 12,
+    elevation: 10,
   },
 
   logo: {

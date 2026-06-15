@@ -8,6 +8,7 @@ const authRoutes = require('../Backend/routes/auth-routes');
 const shitfRoutes = require('../Backend/routes/shitf-routes');
 const attendenceRoutes = require('../Backend/routes/attendence-routes');
 const dailyLogRoutes = require('../Backend/routes/daily-logsheet-routes')
+const healthRoutes = require('../Backend/routes/health-check')
 
 const port = process.env.PORT;
 const app = express();
@@ -31,7 +32,7 @@ app.use('/auth', authRoutes);
 app.use('/shift', shitfRoutes);
 app.use('/attendance', attendenceRoutes);
 app.use('/dailyLog',dailyLogRoutes)
-
+app.use('/health',healthRoutes)
 
 app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);
