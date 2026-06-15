@@ -37,11 +37,11 @@ export default function Splash() {
       }).start();
     });
 
-    const timer = setTimeout(() => {
-      router.replace('/login');
-    }, 2500);  // ← slightly longer to see full animation
+    // const timer = setTimeout(() => {
+    //   router.replace('/login');
+    // }, 2500);  
 
-    return () => clearTimeout(timer);
+    // return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -60,7 +60,6 @@ export default function Splash() {
       }),
     ]).start();
 
-    // Navigate after splash delay
     const timer = setTimeout(() => {
       router.replace('/login');
     }, 2000);
@@ -116,24 +115,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoHalo: {
-    width: 220,
-    height: 220,
+    width: 120,
+    height: 120,
     borderRadius: 110,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoCard: {
-    width: 150,
-    height: 150,
-    borderRadius: 28,
+    width: 110,
+    height: 110,
+    borderRadius: 110,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 10,
   },
+
   logo: {
-    width: '75%',
-    height: '75%',
+    width: '80%',
+    height: '80%',
   },
 });
