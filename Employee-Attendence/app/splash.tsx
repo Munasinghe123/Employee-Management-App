@@ -61,7 +61,7 @@ export default function Splash() {
     ]).start();
 
     const timer = setTimeout(() => {
-      router.replace('/login');
+      router.replace('/logintwo');
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -69,7 +69,7 @@ export default function Splash() {
 
   return (
     <LinearGradient
-      colors={['#8b5cf6', '#4c1d95']}
+      colors={['#8b5cf6', '#6330b0']}
       style={styles.container}
     >
       <View>
@@ -115,16 +115,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoHalo: {
-    width: 120,
-    height: 120,
+    width: 130,
+    height: 130,
     borderRadius: 110,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoCard: {
-    width: 110,
-    height: 110,
+    width: 140,
+    height: 140,
     borderRadius: 110,
     backgroundColor: '#ffffff',
     alignItems: 'center',
