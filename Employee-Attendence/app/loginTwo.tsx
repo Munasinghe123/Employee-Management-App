@@ -34,20 +34,20 @@ function logintwo() {
 
   const handleLogin = async () => {
     try {
-      if (!employeeId || !password) {
-        alert('Please enter Employee ID and password');
-        return;
-      }
+      // if (!employeeId || !password) {
+      //   alert('Please enter Employee ID and password');
+      //   return;
+      // }
 
-      const response = await axios.post(
-        // `${BASE_URL}/auth/login`,
-        'http://localhost:7000/auth/login',
-        { employeeId, password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      // const response = await axios.post(
+      //   // `${BASE_URL}/auth/login`,
+      //   'http://localhost:7000/auth/login',
+      //   { employeeId, password },
+      //   { headers: { 'Content-Type': 'application/json' } }
+      // );
 
-      const { accessToken } = response.data;
-      await login(accessToken);
+      // const { accessToken } = response.data;
+      // await login(accessToken);
       router.replace('/dashboard');
     } catch (error: any) {
       if (error.response) {
@@ -204,8 +204,6 @@ const styles = StyleSheet.create({
   logoCard: {
     width: 140,
     height: 140,
-    borderRadius: 140,
-    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 10,
