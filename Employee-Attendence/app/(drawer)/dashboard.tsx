@@ -48,9 +48,9 @@ export default function Dashboard() {
     const getShiftLabel = (shift: any) => {
         if (!shift) return "—";
 
-        if (shift.shiftId === "SH-1") return "Day Shift";
-        if (shift.shiftId === "SH-2") return "Night Shift - Part 1";
-        if (shift.shiftId === "SH-3") return "Night Shift - Part 2";
+        if (shift.shiftId === "S1") return "Day Shift";
+        if (shift.shiftId === "S2") return "Night Shift - Part 1";
+        if (shift.shiftId === "S3") return "Night Shift - Part 2";
 
         return "Shift";
     };
@@ -89,7 +89,7 @@ export default function Dashboard() {
             );
 
             setAttendanceStatus(res.data);
-            console.log("current attendence data", res.data);
+            // console.log("current attendence data", res.data);
         } catch (err) {
             console.error(err);
         }
@@ -141,7 +141,7 @@ export default function Dashboard() {
                 }
             );
 
-            console.log("weeky stats", res.data);
+            // console.log("weeky stats", res.data);
 
             setWeeklyStats(res.data);
         }
@@ -179,9 +179,9 @@ export default function Dashboard() {
     const employeeName = auth?.user?.name || 'Employee';
     const isCheckedIn = attendanceStatus?.attendance_status === 'PRESENT';
 
-    console.log("attendence status", attendanceStatus?.attendance_status);
+    // console.log("attendence status", attendanceStatus?.attendance_status);
 
-    console.log('User from AuthContext:', auth?.user?.userName);
+    // console.log('User from AuthContext:', auth?.user?.userName);
 
     // modal operations
     //check in user

@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { KeyboardAvoidingView, StyleSheet, View, Text, Platform } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, View, Text, Platform,ScrollView } from 'react-native'
 import { Image } from 'react-native'
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
@@ -9,10 +9,13 @@ import axios from 'axios';
 import { TouchableOpacity, TextInput, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height } = Dimensions.get('window');
 
 function logintwo() {
+
+  const insets = useSafeAreaInsets();
 
   const router = useRouter();
   const [employeeId, setEmployeeId] = useState('');
@@ -34,20 +37,20 @@ function logintwo() {
 
   const handleLogin = async () => {
     try {
-      // if (!employeeId || !password) {
-      //   alert('Please enter Employee ID and password');
-      //   return;
-      // }
+      if (!employeeId || !password) {
+        alert('Please enter Employee ID and password');
+        return;
+      }
 
-      // const response = await axios.post(
-      //   // `${BASE_URL}/auth/login`,
-      //   'http://localhost:7000/auth/login',
-      //   { employeeId, password },
-      //   { headers: { 'Content-Type': 'application/json' } }
-      // );
+      const response = await axios.post(
+        // `${BASE_URL}/auth/login`,
+        'http://localhost:7000/auth/login',
+        { employeeId, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
-      // const { accessToken } = response.data;
-      // await login(accessToken);
+      const { accessToken } = response.data;
+      await login(accessToken);
       router.replace('/dashboard');
     } catch (error: any) {
       if (error.response) {
@@ -59,115 +62,129 @@ function logintwo() {
   };
 
   return (
-    <View
-      style={styles.container}
-    >
-      <ImageBackground
-        source={require('../assets/images/splash.png')}
-        style={styles.header}
-        resizeMode="cover"
-      >
-        <View style={styles.headerOverlay}>
-          <View style={styles.logoCard}>
-            <Image
-              source={require('../assets/images/logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-          <Text style={styles.heroText}>
-            Welcome Back
-          </Text>
-
-          <Text style={styles.heroSubText}>
-            Login to continue
-          </Text>
-        </View>
-      </ImageBackground>
-
-      <View style={styles.body}>
-
-        <KeyboardAvoidingView
-          style={{ width: '100%' }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    // <KeyboardAvoidingView
+    //   style={{ flex: 1 }}
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    // >
+    //   <ScrollView
+    //     style={styles.container}
+    //     contentContainerStyle={[
+         
+    //       { paddingBottom: 100 + insets.bottom }  // ← dynamic
+    //     ]}
+    //     showsVerticalScrollIndicator={false}
+    //   >
+        <View
+          style={styles.container}
         >
-          {/* Fields */}
-          <View style={styles.fieldsBlock}>
-            <View>
-              <Text style={styles.fieldLabel}>EMPLOYEE ID</Text>
-              <View style={styles.inputWrapper}>
-                <View style={styles.iconBox}>
-                  <Ionicons name="person-outline" size={18} color="#7C3AED" />
-                </View>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your employee ID"
-                  value={employeeId}
-                  onChangeText={setEmployeeId}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  placeholderTextColor="#D1D5DB"
+          <ImageBackground
+            source={require('../assets/images/splash.png')}
+            style={styles.header}
+            resizeMode="cover"
+          >
+            <View style={styles.headerOverlay}>
+              <View style={styles.logoCard}>
+                <Image
+                  source={require('../assets/images/logo.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
                 />
-                {employeeId.length > 0 && (
-                  <View style={styles.checkBox}>
-                    <Ionicons name="checkmark" size={16} color="#10B981" />
+              </View>
+              <Text style={styles.heroText}>
+                Welcome Back
+              </Text>
+
+              <Text style={styles.heroSubText}>
+                Login to continue
+              </Text>
+            </View>
+          </ImageBackground>
+
+          <View style={styles.body}>
+
+            <KeyboardAvoidingView
+            style={{ width: '100%' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            {/* Fields */}
+            <View style={styles.fieldsBlock}>
+              <View>
+                <Text style={styles.fieldLabel}>EMPLOYEE ID</Text>
+                <View style={styles.inputWrapper}>
+                  <View style={styles.iconBox}>
+                    <Ionicons name="person-outline" size={18} color="#7C3AED" />
                   </View>
-                )}
-              </View>
-            </View>
-
-            <View>
-              <Text style={styles.fieldLabel}>PASSWORD</Text>
-              <View style={styles.inputWrapper}>
-                <View style={styles.iconBox}>
-                  <Ionicons name="lock-closed-outline" size={18} color="#7C3AED" />
-                </View>
-                <TextInput
-                  style={[styles.input, { paddingRight: 48 }]}
-                  placeholder="Password"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  placeholderTextColor="#D1D5DB"
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeButton}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons
-                    name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                    size={20}
-                    color="#9CA3AF"
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your employee ID"
+                    value={employeeId}
+                    onChangeText={setEmployeeId}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholderTextColor="#D1D5DB"
                   />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Button + footer */}
-            <View style={styles.buttonFooter} >
-              <TouchableOpacity
-                onPress={handleLogin}
-                activeOpacity={0.85}
-                style={styles.loginButtonWrapper}
-              >
-                <View
-                  style={styles.loginButton}
-                >
-                  <Text style={styles.buttonText}>Sign In</Text>
+                  {employeeId.length > 0 && (
+                    <View style={styles.checkBox}>
+                      <Ionicons name="checkmark" size={16} color="#10B981" />
+                    </View>
+                  )}
                 </View>
-              </TouchableOpacity>
-              {/* <Text style={styles.footer}>LECO Workforce 2026</Text> */}
+              </View>
+
+              <View>
+                <Text style={styles.fieldLabel}>PASSWORD</Text>
+                <View style={styles.inputWrapper}>
+                  <View style={styles.iconBox}>
+                    <Ionicons name="lock-closed-outline" size={18} color="#7C3AED" />
+                  </View>
+                  <TextInput
+                    style={[styles.input, { paddingRight: 48 }]}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholderTextColor="#D1D5DB"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeButton}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons
+                      name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Button + footer */}
+              <View style={styles.buttonFooter} >
+                <TouchableOpacity
+                  onPress={handleLogin}
+                  activeOpacity={0.85}
+                  style={styles.loginButtonWrapper}
+                >
+                  <View
+                    style={styles.loginButton}
+                  >
+                    <Text style={styles.buttonText}>Sign In</Text>
+                  </View>
+                </TouchableOpacity>
+                {/* <Text style={styles.footer}>LECO Workforce 2026</Text> */}
+              </View>
+
             </View>
 
-          </View>
+            </KeyboardAvoidingView>
+          </View >
 
-        </KeyboardAvoidingView>
-      </View >
-
-    </View >
+        </View >
+    //   </ScrollView>
+    // </KeyboardAvoidingView>
   )
 }
 
@@ -178,9 +195,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#6330b0",
     flex: 1,
   },
+    
   header: {
     flex: 1.3,
-    width:'100%',
+    width: '100%',
     justifyContent: "center",
     alignItems: "center",
     gap: 5
