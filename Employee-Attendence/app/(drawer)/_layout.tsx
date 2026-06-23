@@ -2,7 +2,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity, View, Text } from 'react-native';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '@/context/authContext';
 import { useRouter } from 'expo-router';
 import { Modal } from 'react-native';
@@ -10,16 +10,19 @@ import { getGreeting, getFormattedDate } from '@/helpers/dateTime';
 import { Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const auth = useContext(AuthContext);
   const router = useRouter();
 
+ 
+
   const handleLogout = async () => {
     setShowLogoutModal(false);
     await auth?.logout();
-    router.replace('/login');
+    router.replace('/logintwo');
   };
 
   return (
@@ -30,7 +33,7 @@ export default function TabLayout() {
           tabBarInactiveTintColor: '#9CA3AF',
           tabBarStyle: {
             backgroundColor: '#ffffff',
-            borderTopColor: '#F3F4F6',
+            borderTopColor: '#E5E7EB',
             height: 60 + insets.bottom,
             paddingBottom: 8,
             paddingTop: 8,
@@ -104,7 +107,7 @@ export default function TabLayout() {
                   color: '#fff',
                   marginBottom: 4,
                 }}>
-                  Log Sheet 
+                  Log Sheet
                 </Text>
                 <Text style={{
                   fontSize: 13,
