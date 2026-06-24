@@ -1,11 +1,11 @@
 
 import React from 'react'
-import { KeyboardAvoidingView, StyleSheet, View, Text, Platform,ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Keyboard, StyleSheet, View, Text, Platform, LayoutAnimation, ScrollView } from 'react-native'
 import { Image } from 'react-native'
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '@/context/authContext';
-import axios from 'axios';
+import api from '../services/api'
 import { TouchableOpacity, TextInput, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
@@ -21,9 +21,26 @@ function logintwo() {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const auth = useContext(AuthContext);
 
 
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => {
+      LayoutAnimation.easeInEaseOut();
+      setKeyboardVisible(true);
+    });
+
+    const hide = Keyboard.addListener('keyboardDidHide', () => {
+      LayoutAnimation.easeInEaseOut();
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (auth?.token) {
@@ -41,10 +58,9 @@ function logintwo() {
         alert('Please enter Employee ID and password');
         return;
       }
-
-      const response = await axios.post(
-        // `${BASE_URL}/auth/login`,
-        'http://localhost:7000/auth/login',
+      console.log("login hit")
+      const response = await api.post(
+        '/auth/login',
         { employeeId, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -62,129 +78,123 @@ function logintwo() {
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   style={{ flex: 1 }}
-    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    // >
-    //   <ScrollView
-    //     style={styles.container}
-    //     contentContainerStyle={[
-         
-    //       { paddingBottom: 100 + insets.bottom }  // ← dynamic
-    //     ]}
-    //     showsVerticalScrollIndicator={false}
-    //   >
-        <View
-          style={styles.container}
+
+    <View
+      style={styles.container}
+    >
+      <ImageBackground
+        source={require('../assets/images/splash.png')}
+        style={[
+          styles.header,
+          keyboardVisible && styles.headerCollapsed,
+        ]}
+        resizeMode="cover"
+      >
+        <View style={styles.headerOverlay}>
+          <View style={styles.logoCard}>
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.heroText}>
+            Welcome Back
+          </Text>
+
+          {!keyboardVisible && (
+            <Text style={styles.heroSubText}>
+              Login to continue
+            </Text>
+          )}
+
+        </View>
+      </ImageBackground>
+
+      <View style={styles.body}>
+
+        <KeyboardAvoidingView
+          style={{ width: '100%' }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ImageBackground
-            source={require('../assets/images/splash.png')}
-            style={styles.header}
-            resizeMode="cover"
-          >
-            <View style={styles.headerOverlay}>
-              <View style={styles.logoCard}>
-                <Image
-                  source={require('../assets/images/logo.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
+          {/* Fields */}
+          <View style={styles.fieldsBlock}>
+            <View>
+              <Text style={styles.fieldLabel}>EMPLOYEE ID</Text>
+              <View style={styles.inputWrapper}>
+                <View style={styles.iconBox}>
+                  <Ionicons name="person-outline" size={18} color="#7C3AED" />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your employee ID"
+                  value={employeeId}
+                  onChangeText={setEmployeeId}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor="#D1D5DB"
                 />
+                {employeeId.length > 0 && (
+                  <View style={styles.checkBox}>
+                    <Ionicons name="checkmark" size={16} color="#10B981" />
+                  </View>
+                )}
               </View>
-              <Text style={styles.heroText}>
-                Welcome Back
-              </Text>
-
-              <Text style={styles.heroSubText}>
-                Login to continue
-              </Text>
             </View>
-          </ImageBackground>
 
-          <View style={styles.body}>
-
-            <KeyboardAvoidingView
-            style={{ width: '100%' }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            {/* Fields */}
-            <View style={styles.fieldsBlock}>
-              <View>
-                <Text style={styles.fieldLabel}>EMPLOYEE ID</Text>
-                <View style={styles.inputWrapper}>
-                  <View style={styles.iconBox}>
-                    <Ionicons name="person-outline" size={18} color="#7C3AED" />
-                  </View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter your employee ID"
-                    value={employeeId}
-                    onChangeText={setEmployeeId}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    placeholderTextColor="#D1D5DB"
-                  />
-                  {employeeId.length > 0 && (
-                    <View style={styles.checkBox}>
-                      <Ionicons name="checkmark" size={16} color="#10B981" />
-                    </View>
-                  )}
+            <View>
+              <Text style={styles.fieldLabel}>PASSWORD</Text>
+              <View style={styles.inputWrapper}>
+                <View style={styles.iconBox}>
+                  <Ionicons name="lock-closed-outline" size={18} color="#7C3AED" />
                 </View>
-              </View>
-
-              <View>
-                <Text style={styles.fieldLabel}>PASSWORD</Text>
-                <View style={styles.inputWrapper}>
-                  <View style={styles.iconBox}>
-                    <Ionicons name="lock-closed-outline" size={18} color="#7C3AED" />
-                  </View>
-                  <TextInput
-                    style={[styles.input, { paddingRight: 48 }]}
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    placeholderTextColor="#D1D5DB"
-                  />
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                    style={styles.eyeButton}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons
-                      name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                      size={20}
-                      color="#9CA3AF"
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Button + footer */}
-              <View style={styles.buttonFooter} >
+                <TextInput
+                  style={[styles.input, { paddingRight: 48 }]}
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor="#D1D5DB"
+                />
                 <TouchableOpacity
-                  onPress={handleLogin}
-                  activeOpacity={0.85}
-                  style={styles.loginButtonWrapper}
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeButton}
+                  activeOpacity={0.7}
                 >
-                  <View
-                    style={styles.loginButton}
-                  >
-                    <Text style={styles.buttonText}>Sign In</Text>
-                  </View>
+                  <Ionicons
+                    name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                    size={20}
+                    color="#9CA3AF"
+                  />
                 </TouchableOpacity>
-                {/* <Text style={styles.footer}>LECO Workforce 2026</Text> */}
               </View>
+            </View>
+
+            {/* Button + footer */}
+            <View style={styles.buttonFooter} >
+              <TouchableOpacity
+                onPress={handleLogin}
+                activeOpacity={0.85}
+                style={styles.loginButtonWrapper}
+              >
+                <View
+                  style={styles.loginButton}
+                >
+                  <Text style={styles.buttonText}>Sign In</Text>
+                </View>
+              </TouchableOpacity>
 
             </View>
 
-            </KeyboardAvoidingView>
-          </View >
+          </View>
 
-        </View >
-    //   </ScrollView>
-    // </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View >
+
+    </View >
+
   )
 }
 
@@ -195,13 +205,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#6330b0",
     flex: 1,
   },
-    
+
   header: {
     flex: 1.3,
     width: '100%',
     justifyContent: "center",
     alignItems: "center",
     gap: 5
+  },
+  headerCollapsed: {
+    flex: 0.5,
   },
   headerOverlay: {
     flex: 1,
@@ -270,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: '#dddfe2',
+    borderColor: '#d8d8d8',
     marginBottom: 20,
     height: 56,
     paddingHorizontal: 20

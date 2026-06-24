@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import api from '../../services/api'
 
 /* TYPES */
 
@@ -120,8 +121,10 @@ export default function DailyLogSheet() {
     try {
       setSubmitting(true);
 
-      const response = await axios.post(
-        'http://localhost:7000/dailyLog/add',
+      console.log("log submit hit")
+      
+      const response = await api.post(
+        '/dailyLog/add',
         form,
         {
           headers: {

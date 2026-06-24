@@ -15,7 +15,7 @@ import axios from 'axios';
 import { Modal } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import * as Haptics from 'expo-haptics';
-
+import api from '@/services/api';
 
 export default function Dashboard() {
 
@@ -79,8 +79,10 @@ export default function Dashboard() {
 
     const fetchAttendanceStatus = async () => {
         try {
-            const res = await axios.get(
-                'http://localhost:7000/attendance/status',
+
+            console.log("fetch statue hit")
+            const res = await api.get(
+                '/attendance/status',
                 {
                     headers: {
                         Authorization: `Bearer ${auth?.token}`,
@@ -99,8 +101,10 @@ export default function Dashboard() {
         if (!auth?.token) return;
 
         const fetchShift = async () => {
+        console.log("get shift hit")
+
             try {
-                const res = await axios.get('http://localhost:7000/shift/current', {
+                const res = await api.get('/shift/current', {
                     headers: {
                         Authorization: `Bearer ${auth.token}`,
                     },
@@ -118,7 +122,9 @@ export default function Dashboard() {
 
         const fetchWeeklyShiftStats = async () => {
             try {
-                const response = await axios.get('http://localhost:7000/shift/weekly-shifts', {
+
+                console.log("weekly-shift hit")
+                const response = await api.get('/shift/weekly-shifts', {
                     headers: {
                         Authorization: `Bearer ${auth.token}`,
                     },
@@ -132,8 +138,10 @@ export default function Dashboard() {
         }
 
         const fetchWeeklyStats = async () => {
-            const res = await axios.get(
-                "http://localhost:7000/attendance/weekly-hours",
+
+             console.log("weekly hours hit hit")
+            const res = await api.get(
+                "/attendance/weekly-hours",
                 {
                     headers: {
                         Authorization: `Bearer ${auth?.token}`
@@ -204,8 +212,9 @@ export default function Dashboard() {
 
             const { latitude, longitude } = location.coords;
 
-            const response = await axios.post(
-                'http://localhost:7000/attendance/checkin',
+            console.log("check in hit")
+            const response = await api.post(
+                '/attendance/checkin',
                 { latitude, longitude },
                 {
                     headers: {
@@ -269,8 +278,8 @@ export default function Dashboard() {
 
             console.log("lat", latitude, "log", longitude);
 
-            const response = await axios.post(
-                'http://localhost:7000/attendance/checkout',
+            const response = await api.post(
+                '/attendance/checkout',
                 { latitude, longitude },
                 {
                     headers: {
