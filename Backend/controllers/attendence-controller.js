@@ -97,7 +97,7 @@ const CheckIn = async (req, res) => {
             stationLon
         );
 
-        const ALLOWED_RADIUS = 50;
+        const ALLOWED_RADIUS = 100;
         const isValidLocation = distance <= ALLOWED_RADIUS;
 
         //  Insert attendance (UPDATED SCHEMA)
@@ -194,7 +194,7 @@ const CheckOut = async (req, res) => {
             stationLon
         );
 
-        const ALLOWED_RADIUS = 50;
+        const ALLOWED_RADIUS = 100;
         const isValidLocation = distance <= ALLOWED_RADIUS;
 
         //  Update attendance with new schema

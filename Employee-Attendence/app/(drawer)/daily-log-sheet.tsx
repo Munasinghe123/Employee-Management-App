@@ -6,17 +6,21 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 import DateInput from '@/components/daily-log-sheet/date-input';
 import TimeInput from '@/components/daily-log-sheet/time-input';
 import axios from 'axios';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '@/context/authContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import api from '../../services/api'
 
 /* TYPES */
 
@@ -79,6 +83,20 @@ export default function DailyLogSheet() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<DailyLogForm>(initialFormState);
   const [submitting, setSubmitting] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', (e) =>
+      setKeyboardHeight(e.endCoordinates.height)
+    );
+    const hide = Keyboard.addListener('keyboardDidHide', () =>
+      setKeyboardHeight(0)
+    );
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   type ObjectSections =
     | 'transformer01'
@@ -103,8 +121,10 @@ export default function DailyLogSheet() {
     try {
       setSubmitting(true);
 
-      const response = await axios.post(
-        'http://localhost:7000/dailyLog/add',
+      console.log("log submit hit")
+      
+      const response = await api.post(
+        '/dailyLog/add',
         form,
         {
           headers: {
@@ -228,50 +248,55 @@ export default function DailyLogSheet() {
   console.log("total steps", totalSteps);
 
   return (
-   <ScrollView
-    style={styles.container}
-    contentContainerStyle={[
-        styles.content,
-        { paddingBottom: 100 + insets.bottom }  // ← dynamic
-    ]}
-    showsVerticalScrollIndicator={false}
->
-      <View style={styles.formWrapper}>
-        {/* Progress */}
-        <View style={styles.progressWrap}>
-          <View
-            style={[
-              styles.progressBar,
-              { width: `${((step + 1) / totalSteps) * 100}%` },
-            ]}
-          />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: 100 + insets.bottom  }  // ← dynamic
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.formWrapper}>
+          {/* Progress */}
+          <View style={styles.progressWrap}>
+            <View
+              style={[
+                styles.progressBar,
+                { width: `${((step + 1) / totalSteps) * 100}%` },
+              ]}
+            />
+          </View>
+
+          <Text style={styles.stepText}>
+            Step {step + 1} of {totalSteps}
+          </Text>
+
+          {steps[step]}
+
+          {/* Navigation */}
+          <View style={styles.navRow}>
+            <Button
+              text="Back"
+              disabled={step === 0}
+              onPress={() => setStep(step - 1)}
+            />
+            <Button
+              text={step === totalSteps - 1 ? 'Submit' : 'Next'}
+              disabled={step === 0 && (!form.date || !form.time)}
+              onPress={() => {
+                step === totalSteps - 1
+                  ? handleSubmit()
+                  : setStep(step + 1);
+              }}
+            />
+          </View>
         </View>
-
-        <Text style={styles.stepText}>
-          Step {step + 1} of {totalSteps}
-        </Text>
-
-        {steps[step]}
-
-        {/* Navigation */}
-        <View style={styles.navRow}>
-          <Button
-            text="Back"
-            disabled={step === 0}
-            onPress={() => setStep(step - 1)}
-          />
-          <Button
-            text={step === totalSteps - 1 ? 'Submit' : 'Next'}
-            disabled={step === 0 && (!form.date || !form.time)}
-            onPress={() => {
-              step === totalSteps - 1
-                ? handleSubmit()
-                : setStep(step + 1);
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
